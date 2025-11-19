@@ -15,6 +15,7 @@ DOMAIN-SUFFIX,apis.google.com
 DOMAIN-KEYWORD,colab
 DOMAIN-KEYWORD,developerprofiles
 DOMAIN-KEYWORD,generativelanguage
+DOMAIN-SUFFIX,antigravity.google
 # OpenAI
 DOMAIN,browser-intake-datadoghq.com
 DOMAIN,chat.openai.com.cdn.cloudflare.net
