@@ -1,0 +1,48 @@
+name: Sync AI Rules
+
+on:
+  schedule:
+    # 每天 UTC 时间 0 点运行（北京时间 8 点）
+    - cron: '0 0 * * *'
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download and sync AI rules
+        run: |
+          # 下载远程规则文件
+          curl -fsSL "https://redirect.semitelecom.net/geosite/CATEGORY-AI-CHAT-!CN" -o /tmp/remote-ai-rules.txt
+          
+          # 检查下载是否成功
+          if [ ! -s /tmp/remote-ai-rules.txt ]; then
+            echo "Error: Downloaded file is empty or download failed"
+            exit 1
+          fi
+          
+          # 复制到目标位置
+          cp /tmp/remote-ai-rules.txt Surge/Rules/AI.list
+          
+          echo "Rules synced successfully"
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          git add Surge/Rules/AI.list
+          
+          # 检查是否有变更
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: sync AI rules from upstream [$(date +'%Y-%m-%d')]"
+            git push
+          fi
